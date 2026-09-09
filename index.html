@@ -85,12 +85,12 @@
     
     <div id="notice" style="font-size:0.75rem;color:#58a6ff;text-align:center;font-style:italic;margin-bottom:10px;">🟢 Live UI Calculator Ready</div>
     <div style="display:flex;justify-content:between;font-size:0.85rem;border-top:1px solid var(--border);padding-top:10px;">
-        <span>⏱ Auto Time Left:</span><span id="clock" style="font-weight:bold;margin-left:auto;color:var(--gold);font-family:monospace;">--:--</span>
+        <span>⏱ Auto Time Left:</span><span id="clock" style="font-weight:bold;margin-left:auto;color:var(--gold);font-family:monospace;">05:00</span>
     </div>
 </div>
 
 <script>
-    // Grounded variables to live global market assets baseline
+    // Initializing structure completely synchronized with the target window to prevent logic crashes
     let d = { spot: 4416.10, strike: 4415.53, floor: 86, window: 5, up: 61, secs: 300, muted: true };
     let actx = null, timerInterval = null;
 
@@ -116,7 +116,7 @@
         let newWindow = parseInt(document.getElementById('window').value) || 5;
         if (newWindow !== d.window) {
             d.window = newWindow;
-            d.secs = d.window * 60; // Sync timer if window value updates manually
+            d.secs = d.window * 60;
         }
         calc();
     }
@@ -143,9 +143,7 @@
 
     function tl(l) { document.getElementById('floor').disabled = l; }
 
-    // Core Calculation Logic & UI Updates
     function calc() {
-        // Simple directional percentage estimation matching preset profiles
         let diff = d.spot - d.strike;
         if (diff > 1) d.up = 92;
         else if (diff > 0) d.up = 61;
@@ -153,11 +151,9 @@
 
         let downPercent = 100 - d.up;
 
-        // Update UI Probability Badges
         document.getElementById('up').innerText = `Up · ${d.up}%`;
         document.getElementById('down').innerText = `Down · ${downPercent}%`;
 
-        // Check if Trigger Floor criteria is breached
         let statusEl = document.getElementById('status');
         if (d.up >= d.floor) {
             statusEl.className = "badge trig";
@@ -169,14 +165,12 @@
         }
     }
 
-    // Interactive Timer Countdown System
     function startTimer() {
-        d.secs = d.window * 60;
         if (timerInterval) clearInterval(timerInterval);
         
         timerInterval = setInterval(() => {
             if (d.secs <= 0) {
-                d.secs = d.window * 60; // Auto reset cycle window
+                d.secs = d.window * 60; 
             } else {
                 d.secs--;
             }
@@ -187,7 +181,6 @@
         }, 1000);
     }
 
-    // App Initialization
     window.onload = function() {
         calc();
         startTimer();
